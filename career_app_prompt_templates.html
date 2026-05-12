@@ -1,0 +1,506 @@
+
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: var(--font-sans); }
+.container { padding: 1rem 0; }
+.tabs { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 1.5rem; }
+.tab { padding: 6px 14px; border-radius: 20px; border: 0.5px solid var(--color-border-secondary); font-size: 13px; cursor: pointer; background: var(--color-background-primary); color: var(--color-text-secondary); transition: all 0.15s; }
+.tab.active { background: #3C3489; color: #EEEDFE; border-color: #3C3489; }
+.tab:hover:not(.active) { background: var(--color-background-secondary); }
+.section { display: none; }
+.section.active { display: block; }
+.card { background: var(--color-background-primary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-lg); padding: 1rem 1.25rem; margin-bottom: 1rem; }
+.card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem; }
+.card-title { font-size: 14px; font-weight: 500; color: var(--color-text-primary); }
+.badge { font-size: 11px; padding: 3px 10px; border-radius: 12px; font-weight: 500; }
+.badge-system { background: #E6F1FB; color: #0C447C; }
+.badge-user { background: #EAF3DE; color: #27500A; }
+.badge-both { background: #FAEEDA; color: #633806; }
+.code-block { background: var(--color-background-tertiary); border-radius: var(--border-radius-md); padding: 0.75rem 1rem; font-family: var(--font-mono); font-size: 12px; color: var(--color-text-primary); line-height: 1.6; white-space: pre-wrap; word-break: break-word; position: relative; border: 0.5px solid var(--color-border-tertiary); }
+.copy-btn { position: absolute; top: 8px; right: 8px; padding: 4px 10px; font-size: 11px; border-radius: var(--border-radius-md); border: 0.5px solid var(--color-border-secondary); background: var(--color-background-primary); color: var(--color-text-secondary); cursor: pointer; }
+.copy-btn:hover { background: var(--color-background-secondary); }
+.tip { font-size: 12px; color: var(--color-text-secondary); margin-top: 0.5rem; padding-left: 0.25rem; border-left: 2px solid #AFA9EC; padding-left: 0.5rem; }
+.var-tag { display: inline-block; background: #FAEEDA; color: #633806; font-size: 11px; padding: 1px 6px; border-radius: 4px; font-family: var(--font-mono); margin: 2px; }
+.vars-row { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 0.5rem; }
+</style>
+
+<div class="container">
+  <h2 class="sr-only">Career guidance app prompt templates organized by feature</h2>
+
+  <div class="tabs" id="tabs">
+    <div class="tab active" onclick="switchTab('system')">System Prompt</div>
+    <div class="tab" onclick="switchTab('career')">Career Match</div>
+    <div class="tab" onclick="switchTab('stream')">Stream Select</div>
+    <div class="tab" onclick="switchTab('roadmap')">Roadmap</div>
+    <div class="tab" onclick="switchTab('chatbot')">Chatbot</div>
+    <div class="tab" onclick="switchTab('parent')">Parent Mode</div>
+    <div class="tab" onclick="switchTab('college')">Colleges</div>
+    <div class="tab" onclick="switchTab('scholarship')">Scholarship</div>
+    <div class="tab" onclick="switchTab('future')">Future Scope</div>
+  </div>
+
+  <!-- SYSTEM PROMPT -->
+  <div class="section active" id="section-system">
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title">Master system prompt — use in every API call</span>
+        <span class="badge badge-system">SYSTEM</span>
+      </div>
+      <div class="code-block" id="code-system">You are CareerSaathi, an AI career mentor built specifically for Indian students in 10th and 12th standard.
+
+YOUR PERSONA:
+- Friendly, encouraging, never discouraging
+- Speak like a helpful older sibling, not a formal counselor
+- Always give hope — even for low marks or limited budget
+- Use simple English (avoid jargon unless explained)
+
+YOUR KNOWLEDGE SCOPE:
+- Indian education system only (CBSE, State boards, ICSE)
+- Indian entrance exams: JEE, NEET, CAT, CLAT, NDA, CUET, etc.
+- Indian colleges: IITs, NITs, Government colleges, Private colleges
+- Indian government job opportunities: UPSC, SSC, PSU, etc.
+- Career salary ranges as per Indian market (in LPA)
+
+STRICT RULES:
+- NEVER say "you cannot become X"
+- NEVER give negative responses about low marks
+- ALWAYS suggest alternative paths if primary path is tough
+- NEVER recommend illegal or unrealistic options
+- ALWAYS respond in valid JSON format unless told otherwise
+- Keep responses helpful for ages 15–19
+
+RESPONSE FORMAT:
+Always return structured JSON. Never add text outside the JSON block.
+<button class="copy-btn" onclick="copyCode('code-system', this)">Copy</button>
+      </div>
+      <p class="tip">This goes in the "system" field of every API call. It's the foundation — all other prompts build on top of this.</p>
+    </div>
+  </div>
+
+  <!-- CAREER MATCH -->
+  <div class="section" id="section-career">
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title">Career recommendation engine</span>
+        <span class="badge badge-user">USER PROMPT</span>
+      </div>
+      <div class="code-block" id="code-career">const careerPrompt = `
+STUDENT PROFILE:
+- Class: ${studentClass}
+- Board: ${board}
+- Stream: ${stream}
+- Percentage: ${percentage}%
+- Favorite Subjects: ${favoriteSubjects}
+- Hated Subjects: ${hatedSubjects}
+- Hobbies & Interests: ${interests}
+- Work Style Preference: ${workStyle}
+- City/Location: ${city}
+- Family Budget for Education: ${budget} per year
+- Prefers: ${preference} (government job / private / business / any)
+
+TASK:
+Based on the above profile, recommend exactly 5 career options.
+
+For EACH career return this JSON structure:
+{
+  "careerName": "",
+  "matchScore": 85,
+  "whySuitable": "2 lines max explaining why this fits the student",
+  "requiredStream": "",
+  "topEntranceExams": ["", ""],
+  "topCollegesNearCity": ["", "", ""],
+  "courseDuration": "",
+  "averageFeesPerYear": "",
+  "startingSalary": "X-Y LPA",
+  "futureDemand": "High / Medium / Low",
+  "aiAutomationRisk": "Low / Medium / High",
+  "govtOpportunities": true or false,
+  "alternativePath": "If student cannot qualify entrance exam, they can..."
+}
+
+Return a JSON array of 5 such objects. Nothing outside the JSON.
+`;
+<button class="copy-btn" onclick="copyCode('code-career', this)">Copy</button>
+      </div>
+      <div class="vars-row">
+        <span class="var-tag">${studentClass}</span>
+        <span class="var-tag">${board}</span>
+        <span class="var-tag">${stream}</span>
+        <span class="var-tag">${percentage}</span>
+        <span class="var-tag">${interests}</span>
+        <span class="var-tag">${city}</span>
+        <span class="var-tag">${budget}</span>
+        <span class="var-tag">${preference}</span>
+      </div>
+      <p class="tip">Fill these variables from your student onboarding form. The AI returns a JSON array you can directly map to career cards in UI.</p>
+    </div>
+  </div>
+
+  <!-- STREAM SELECTION -->
+  <div class="section" id="section-stream">
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title">Stream selection after 10th</span>
+        <span class="badge badge-user">USER PROMPT</span>
+      </div>
+      <div class="code-block" id="code-stream">const streamPrompt = `
+STUDENT INFO (10th Standard):
+- Board: ${board}
+- Total Percentage: ${percentage}%
+- Science Marks: ${scienceMarks}
+- Math Marks: ${mathMarks}
+- English Marks: ${englishMarks}
+- Social Science Marks: ${ssMArks}
+- Top 3 Interests: ${interests}
+- Career Dream (if any): ${dreamCareer}
+- Doesn't want to do: ${dislikes}
+- City: ${city}
+
+TASK:
+Analyze this student and recommend which stream they should take in 11th.
+
+Return this JSON:
+{
+  "recommendedStream": "Science / Commerce / Arts / Vocational",
+  "confidenceScore": 90,
+  "reasoning": "3-4 line explanation in simple English why this stream suits them",
+  "bestCareersInThisStream": ["", "", ""],
+  "warningIfWrongStream": "What happens if they pick a wrong stream",
+  "alternativeStream": {
+    "name": "",
+    "reason": "Why this could also work"
+  },
+  "subjectSuggestions": {
+    "mustTake": [""],
+    "optional": [""]
+  },
+  "parentMessage": "One line reassurance message for parents"
+}
+`;
+<button class="copy-btn" onclick="copyCode('code-stream', this)">Copy</button>
+      </div>
+      <p class="tip">Use this right after a student enters their 10th marks. The "parentMessage" field is great for showing in parent mode.</p>
+    </div>
+  </div>
+
+  <!-- ROADMAP -->
+  <div class="section" id="section-roadmap">
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title">Visual career roadmap generator</span>
+        <span class="badge badge-user">USER PROMPT</span>
+      </div>
+      <div class="code-block" id="code-roadmap">const roadmapPrompt = `
+CAREER GOAL: ${selectedCareer}
+STUDENT CURRENT STATUS:
+- Currently in: ${currentClass} (10th / 12th)
+- Stream: ${stream}
+- City: ${city}
+
+TASK:
+Create a detailed step-by-step career roadmap from current status to becoming a ${selectedCareer}.
+
+Return this JSON:
+{
+  "careerTitle": "",
+  "totalYears": 0,
+  "steps": [
+    {
+      "stepNumber": 1,
+      "title": "Complete 12th Science",
+      "duration": "2 years",
+      "subjects": ["Physics", "Chemistry", "Math"],
+      "targetPercentage": "75%+",
+      "entranceExamsToPrepare": ["JEE", "BITSAT"],
+      "tip": "Focus on NCERT first"
+    }
+  ],
+  "salaryJourney": [
+    { "year": "0-2 years exp", "salary": "4-6 LPA" },
+    { "year": "3-5 years exp", "salary": "8-15 LPA" },
+    { "year": "10+ years exp", "salary": "25-50 LPA" }
+  ],
+  "skillsToLearn": ["", ""],
+  "alternativeRoutes": [
+    {
+      "title": "Diploma route",
+      "description": "If JEE doesn't work out..."
+    }
+  ],
+  "motivationLine": "One inspiring line for the student"
+}
+`;
+<button class="copy-btn" onclick="copyCode('code-roadmap', this)">Copy</button>
+      </div>
+      <p class="tip">Feed the "steps" array into React Flow or a custom timeline component to render the visual roadmap on screen.</p>
+    </div>
+  </div>
+
+  <!-- CHATBOT -->
+  <div class="section" id="section-chatbot">
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title">AI mentor chatbot</span>
+        <span class="badge badge-both">SYSTEM + USER</span>
+      </div>
+      <div class="code-block" id="code-chatbot">// SYSTEM PROMPT (add to base system prompt)
+const chatbotSystemAddOn = `
+You are now in CHAT MODE.
+- Answer student questions in a conversational, friendly tone
+- Keep responses under 150 words unless explanation needs more
+- Use bullet points when listing options
+- ALWAYS end with one follow-up question or next action
+- If student seems stressed or mentions failure, be extra supportive first, then give information
+- When recommending a career path, always mention 1 backup option
+`;
+
+// USER PROMPT TEMPLATE (wrap student message with context)
+const chatbotUserPrompt = `
+STUDENT CONTEXT:
+- Class: ${studentClass}
+- Stream: ${stream}
+- Marks: ${percentage}%
+- City: ${city}
+- Previously shown careers: ${shownCareers}
+
+STUDENT'S QUESTION:
+"${studentMessage}"
+
+TASK:
+Answer this question as CareerSaathi. 
+Return JSON:
+{
+  "reply": "Your friendly conversational reply here",
+  "suggestedActions": ["", ""],
+  "relatedTopics": ["", ""]
+}
+`;
+<button class="copy-btn" onclick="copyCode('code-chatbot', this)">Copy</button>
+      </div>
+      <p class="tip">Pass full conversation history in the messages array for multi-turn chat. Always include student context so AI gives personalized answers.</p>
+    </div>
+  </div>
+
+  <!-- PARENT MODE -->
+  <div class="section" id="section-parent">
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title">Parent report generator</span>
+        <span class="badge badge-user">USER PROMPT</span>
+      </div>
+      <div class="code-block" id="code-parent">const parentPrompt = `
+CHILD PROFILE:
+- Name: ${studentName}
+- Class: ${studentClass}
+- Marks: ${percentage}%
+- Recommended Careers: ${recommendedCareers}
+- Top Matched Career: ${topCareer}
+- Student's Dream: ${dreamCareer}
+- Student Strengths: ${strengths}
+- City: ${city}
+- Family Budget: ${budget}/year
+
+TASK:
+Generate a parent-friendly career summary report.
+Parents are worried about job security and salary. Speak to their concerns.
+Use reassuring, confident language. No technical jargon.
+
+Return JSON:
+{
+  "summaryForParents": "3-4 lines explaining their child's strengths in simple words",
+  "topCareerRecommendation": {
+    "name": "",
+    "whyItSuitsYourChild": "",
+    "jobSecurity": "High / Medium",
+    "averageSalaryIn5Years": "",
+    "isGovtOpportunityAvailable": true,
+    "educationCostEstimate": "X to Y Lakhs total",
+    "topAffordableColleges": ["", ""]
+  },
+  "parentConcernsAddressed": {
+    "jobSecurity": "",
+    "salaryPotential": "",
+    "affordability": "",
+    "locationPreference": ""
+  },
+  "scholarshipsAvailable": ["", ""],
+  "messageToParents": "One warm reassuring message"
+}
+`;
+<button class="copy-btn" onclick="copyCode('code-parent', this)">Copy</button>
+      </div>
+      <p class="tip">This is your most emotionally impactful feature. The "messageToParents" field can be displayed as a highlighted quote in the parent dashboard.</p>
+    </div>
+  </div>
+
+  <!-- COLLEGE RECOMMENDATION -->
+  <div class="section" id="section-college">
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title">College recommendation engine</span>
+        <span class="badge badge-both">USER PROMPT + YOUR DB</span>
+      </div>
+      <div class="code-block" id="code-college">// First fetch your own college data, then inject it
+const collegeData = await getCollegesFromDB(city, career, budget);
+
+const collegePrompt = `
+STUDENT REQUIREMENTS:
+- Target Career: ${selectedCareer}
+- Preferred Course: ${preferredCourse}
+- City Preference: ${city}
+- Willing to relocate: ${willingToRelocate}
+- Max Fees Per Year: ${maxFees}
+- Entrance Exam Score: ${entranceScore}
+- Category: ${category} (General/OBC/SC/ST)
+
+AVAILABLE COLLEGES FROM OUR DATABASE:
+${JSON.stringify(collegeData)}
+
+TASK:
+From the above college list, recommend best 5 colleges for this student.
+Do NOT suggest colleges outside this list.
+
+Return JSON array:
+[
+  {
+    "collegeName": "",
+    "location": "",
+    "feesPerYear": "",
+    "courseName": "",
+    "eligibility": "",
+    "entranceCutoff": "",
+    "placementAvgSalary": "",
+    "scholarshipsAvailable": true,
+    "hostelAvailable": true,
+    "whyRecommended": "One line reason",
+    "applicationDeadline": "",
+    "officialWebsite": ""
+  }
+]
+`;
+<button class="copy-btn" onclick="copyCode('code-college', this)">Copy</button>
+      </div>
+      <p class="tip">Inject your own college database into the prompt. This is RAG in action — AI picks the best matches from YOUR data, not from its training data.</p>
+    </div>
+  </div>
+
+  <!-- SCHOLARSHIP -->
+  <div class="section" id="section-scholarship">
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title">Scholarship & financial aid finder</span>
+        <span class="badge badge-user">USER PROMPT</span>
+      </div>
+      <div class="code-block" id="code-scholarship">const scholarshipPrompt = `
+STUDENT FINANCIAL PROFILE:
+- Class: ${studentClass}
+- Caste Category: ${category}
+- Annual Family Income: ${familyIncome}
+- State: ${state}
+- Marks/Percentage: ${percentage}%
+- Chosen Course: ${course}
+- Chosen College Type: ${collegeType} (Govt / Private)
+- Gender: ${gender}
+
+TASK:
+Find all relevant scholarships, government schemes, and education loans 
+this student can apply for in India.
+
+Return JSON:
+{
+  "scholarships": [
+    {
+      "name": "",
+      "offeredBy": "Central Govt / State Govt / Private",
+      "amount": "",
+      "eligibility": "",
+      "applicationPortal": "",
+      "deadline": "Usually when",
+      "isStudentEligible": true,
+      "reason": "Why this student qualifies"
+    }
+  ],
+  "educationLoans": [
+    {
+      "bank": "",
+      "maxAmount": "",
+      "interestRate": "",
+      "moratoriumPeriod": "",
+      "govtSubsidyAvailable": true
+    }
+  ],
+  "freeCoursePlatforms": ["NPTEL", "Swayam", ""],
+  "totalEstimatedAid": "Up to X Lakhs available"
+}
+`;
+<button class="copy-btn" onclick="copyCode('code-scholarship', this)">Copy</button>
+      </div>
+      <p class="tip">This feature is highly impactful for rural and low-income students. Add "isStudentEligible" so the UI can highlight only the relevant ones.</p>
+    </div>
+  </div>
+
+  <!-- FUTURE SCOPE -->
+  <div class="section" id="section-future">
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title">Career future scope & demand analysis</span>
+        <span class="badge badge-user">USER PROMPT</span>
+      </div>
+      <div class="code-block" id="code-future">const futureScopePrompt = `
+CAREER TO ANALYZE: ${careerName}
+
+TASK:
+Analyze the future scope of this career for an Indian student 
+who will enter the job market in ${yearsToEnterMarket} years.
+
+Return JSON:
+{
+  "careerName": "",
+  "overallFutureScore": 85,
+  "demandTrend": "Rising / Stable / Declining",
+  "aiAutomationRisk": {
+    "riskLevel": "Low / Medium / High",
+    "explanation": "",
+    "safeSkillsToLearn": ["", ""]
+  },
+  "jobMarketIndia": {
+    "currentOpenings": "Approx X thousand/year",
+    "topHiringCompanies": ["", ""],
+    "topHiringCities": ["", ""],
+    "govtVsPrivate": "60% Private, 40% Govt"
+  },
+  "salaryGrowth": [
+    { "stage": "Fresher", "salary": "4-6 LPA" },
+    { "stage": "3 years", "salary": "8-12 LPA" },
+    { "stage": "5 years", "salary": "15-25 LPA" },
+    { "stage": "10 years", "salary": "30-60 LPA" }
+  ],
+  "emergingOpportunities": ["", ""],
+  "globalScope": "Can this career lead to abroad opportunities?",
+  "verdictForStudent": "One honest, encouraging line about this career's future"
+}
+`;
+<button class="copy-btn" onclick="copyCode('code-future', this)">Copy</button>
+      </div>
+      <p class="tip">Use "overallFutureScore" to show a visual score meter on the career card. "aiAutomationRisk" is a very popular feature among parents.</p>
+    </div>
+  </div>
+
+</div>
+
+<script>
+function switchTab(id) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  event.target.classList.add('active');
+  document.getElementById('section-' + id).classList.add('active');
+}
+
+function copyCode(id, btn) {
+  const text = document.getElementById(id).innerText.replace('Copy','').trim();
+  navigator.clipboard.writeText(text).then(() => {
+    btn.textContent = 'Copied!';
+    setTimeout(() => btn.textContent = 'Copy', 2000);
+  });
+}
+</script>
