@@ -33,7 +33,7 @@ Remind students marks are not everything Keep responses to 3-5 paragraphs.`;
   }));
 
   const response = await fetch(
-    'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=AIzaSyCEiIgIURL9cwGMREPOuCgXhsnWZRLWejw',
+    'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=urapikey',
     {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
